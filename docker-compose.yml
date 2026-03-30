@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./server
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - JWT_SECRET=gizli_anahtar_lutfen_degistirin
+      - REFRESH_TOKEN_SECRET=refresh_gizli_anahtar
+      - PORT=3000
+      - NODE_ENV=production
+      - CORS_ORIGIN=http://localhost:5173
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - mhrs-network
+
+  client:
+    build: ./client
+    ports:
+      - "5173:80"
+    depends_on:
+      - server
+    networks:
+      - mhrs-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6381:6379"
+    networks:
+      - mhrs-network
+
+  jenkins:
+    build: ./jenkins
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - .:/var/jenkins_home/workspace/mhrs-project
+    networks:
+      - mhrs-network
+
+networks:
+  mhrs-network:
+    driver: bridge
+
+volumes:
+  jenkins_home:

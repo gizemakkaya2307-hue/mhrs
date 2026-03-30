@@ -1,0 +1,21 @@
+﻿--- DATABASE USERS ---
+[
+  {
+    "id": 1,
+    "email": "gizemakkaya23007@gmail.com",
+    "role": "USER",
+    "is2FAEnabled": true
+  },
+  {
+    "id": 2,
+    "email": "admin@admin.com",
+    "role": "ADMIN",
+    "is2FAEnabled": false
+  },
+  {
+    "id": 3,
+    "email": "meleknuryildirir@gmail.com",
+    "role": "USER",
+    "is2FAEnabled": false
+  }
+]
