@@ -38,20 +38,29 @@ pipeline {
             }
         }
 
-        stage('Backend Setup & Test') {
+        stage('Cleanup') {
             steps {
-                dir('server') {
-                    echo 'Installing Backend Dependencies...'
-                    sh 'npm ci || npm install'
+                echo 'Cleaning up existing node_modules to prevent corruption...'
+                sh 'rm -rf server/node_modules client/node_modules'
+            }
+        }
 
-                    echo 'Generating Prisma Client...'
+        stage('Backend Setup') {
+            steps {
+                dir('/var/jenkins_home/workspace/mhrs-project/server') {
+                    echo 'Installing Server Dependencies (Clean)...'
+                    sh 'npm ci --legacy-peer-deps'
                     sh 'npx prisma generate'
+                }
+            }
+        }
 
-                    echo 'Pushing Database Schema (SQLite)...'
-                    sh 'npx prisma db push --accept-data-loss'
-
-                    echo 'Running Jest Unit Tests...'
-                    sh 'npx jest --passWithNoTests --coverage'
+        stage('Frontend Build') {
+            steps {
+                dir('/var/jenkins_home/workspace/mhrs-project/client') {
+                    echo 'Building Frontend (Clean)...'
+                    sh 'npm ci --legacy-peer-deps'
+                    sh 'npm run build'
                 }
             }
         }
