@@ -1,0 +1,8 @@
+node_modules
+dist
+.git
+.env
+*.db
+*.log
+docker-mariadb-data
+jenkins_home

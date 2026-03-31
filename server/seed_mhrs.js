@@ -147,6 +147,62 @@ async function runSeed() {
     console.log(`[${city}] Şehri tamamlandı. Toplam Doktor: ${totalDoctorsAdded}`);
   }
 
+  // --- STANDARD DEMO USERS ---
+  console.log("Standart demo kullanıcıları oluşturuluyor...");
+  
+  // 1. Admin
+  await prisma.user.upsert({
+    where: { email: 'admin@mhrs.gov.tr' },
+    update: {},
+    create: {
+      email: 'admin@mhrs.gov.tr',
+      password: defaultPasswordHash,
+      name: 'Sistem Yöneticisi',
+      tcNo: '11111111111',
+      role: 'ADMIN'
+    }
+  });
+
+  // 2. Test User
+  await prisma.user.upsert({
+    where: { email: 'user@mhrs.gov.tr' },
+    update: {},
+    create: {
+      email: 'user@mhrs.gov.tr',
+      password: defaultPasswordHash,
+      name: 'Ahmet Vatandaş',
+      tcNo: '22222222222',
+      role: 'USER'
+    }
+  });
+
+  // 3. Demo Doctor (Kardiyoloji)
+  const demoClinic = await prisma.clinic.create({
+    data: { name: 'Ankara Bilkent Şehir Hastanesi', city: 'Ankara', district: 'Çankaya' }
+  });
+  const demoDocUser = await prisma.user.upsert({
+    where: { email: 'doctor@mhrs.gov.tr' },
+    update: {},
+    create: {
+      email: 'doctor@mhrs.gov.tr',
+      password: defaultPasswordHash,
+      name: 'Uzm. Dr. Mehmet Tabip',
+      tcNo: '33333333333',
+      role: 'DOCTOR'
+    }
+  });
+  await prisma.doctor.upsert({
+    where: { userId: demoDocUser.id },
+    update: { clinicId: demoClinic.id },
+    create: {
+      name: 'Uzm. Dr. Mehmet Tabip',
+      branch: 'Kardiyoloji',
+      hospital: 'Ankara Bilkent Şehir Hastanesi',
+      userId: demoDocUser.id,
+      clinicId: demoClinic.id
+    }
+  });
+
   console.log("\n=================================");
   console.log("MHRS Dev Seed İşlemi Tamamlandı!");
   console.log(`Oluşturulan Hastane/Poliklinik Sayısı: ${totalClinicsAdded}`);

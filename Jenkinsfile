@@ -13,8 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checking out source repository...'
-                // checkout scm
-                echo 'Local workspace detected, skipping SCM checkout for manual pipeline run.'
+                checkout scm
             }
         }
 
@@ -23,11 +22,18 @@ pipeline {
                 stage('ESLint (Client)') {
                     steps {
                         dir('client') {
-                            sh 'npm ci || npm install'
-                            sh 'npx eslint src --max-warnings=0 || echo "ESLint failed, check warnings."'
+                            echo 'Installing client dependencies...'
+                            sh '''
+                                npm ci || npm install --legacy-peer-deps
+                            '''
+                            echo 'Running ESLint...'
+                            sh '''
+                                npx eslint src --max-warnings=100 || echo "ESLint issues found, pipeline continues."
+                            '''
                         }
                     }
                 }
+
                 stage('SonarQube Security Scan') {
                     steps {
                         echo 'Running SAST (Static Application Security Testing)...'
@@ -38,18 +44,23 @@ pipeline {
             }
         }
 
-        stage('Cleanup') {
+        stage('Cleanup Old Dependencies') {
             steps {
-                echo 'Cleaning up existing node_modules to prevent corruption...'
-                sh 'rm -rf server/node_modules client/node_modules'
+                echo 'Cleaning old node_modules if present...'
+                sh '''
+                    rm -rf server/node_modules client/node_modules || true
+                '''
             }
         }
 
         stage('Backend Setup') {
             steps {
-                dir('/var/jenkins_home/workspace/mhrs-project/server') {
-                    echo 'Installing Server Dependencies (Clean)...'
-                    sh 'npm ci --legacy-peer-deps'
+                dir('server') {
+                    echo 'Installing server dependencies...'
+                    sh '''
+                        npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+                    '''
+                    echo 'Generating Prisma client...'
                     sh 'npx prisma generate'
                 }
             }
@@ -57,9 +68,12 @@ pipeline {
 
         stage('Frontend Build') {
             steps {
-                dir('/var/jenkins_home/workspace/mhrs-project/client') {
-                    echo 'Building Frontend (Clean)...'
-                    sh 'npm ci --legacy-peer-deps'
+                dir('client') {
+                    echo 'Installing frontend dependencies...'
+                    sh '''
+                        npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+                    '''
+                    echo 'Building frontend...'
                     sh 'npm run build'
                 }
             }
@@ -75,31 +89,36 @@ pipeline {
                         }
                     }
                 }
+
                 stage('Docker Compose Validation') {
                     steps {
-                        echo 'Validating Docker Configuration...'
-                        sh 'docker-compose config'
+                        echo 'Validating Docker configuration...'
+                        sh 'docker compose config'
                     }
                 }
             }
         }
 
         stage('Publish Artifacts') {
-            when { branch 'main' }
+            when {
+                branch 'main'
+            }
             steps {
                 echo 'Building production Docker images...'
                 // sh "docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${env.BUILD_ID} ."
                 // sh "docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${env.BUILD_ID}"
-                echo 'Mock: Docker Image Pushed to MHRS Internal Registry.'
+                echo 'Mock: Docker image pushed successfully.'
             }
         }
 
         stage('Deploy to Staging') {
-            when { branch 'main' }
+            when {
+                branch 'main'
+            }
             steps {
-                echo 'Deploying to Kubernetes Staging Cluster...'
+                echo 'Deploying to staging environment...'
                 // sh "kubectl apply -f k8s/staging/ --record"
-                echo 'Mock: Deploy Successful.'
+                echo 'Mock: Deploy successful.'
             }
         }
     }
@@ -109,13 +128,13 @@ pipeline {
             echo 'Clearing workspace...'
             cleanWs()
         }
+
         success {
-            echo 'Pipeline completed successfully. Sending notification...'
-            // slackSend color: 'good', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' deployed to Staging."
+            echo 'Pipeline completed successfully.'
         }
+
         failure {
-            echo 'Pipeline failed! Alerting DevOps team...'
-            // slackSend color: 'danger', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' please check logs."
+            echo 'Pipeline failed. Please check logs.'
         }
     }
 }

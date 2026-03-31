@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=file:./dev.db
+      - DATABASE_URL=mysql://root:mhrs_pass@mariadb:3306/mhrs_db
       - JWT_SECRET=gizli_anahtar_lutfen_degistirin
       - REFRESH_TOKEN_SECRET=refresh_gizli_anahtar
       - PORT=3000
@@ -15,6 +15,21 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
+    networks:
+      - mhrs-network
+    depends_on:
+      - mariadb
+      - redis
+
+  mariadb:
+    image: mariadb:10.6
+    ports:
+      - "3307:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=mhrs_pass
+      - MARIADB_DATABASE=mhrs_db
+    volumes:
+      - mariadb_data:/var/lib/mysql
     networks:
       - mhrs-network
 
@@ -52,3 +67,4 @@ networks:
 
 volumes:
   jenkins_home:
+  mariadb_data:

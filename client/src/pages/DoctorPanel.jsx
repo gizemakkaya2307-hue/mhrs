@@ -266,8 +266,13 @@ export default function DoctorPanel() {
                                         </div>
                                     </div>
                                     <div className="flex gap-2">
+                                        {detail.status === 'PENDING' && (
+                                            <button onClick={() => changeStatus('CONFIRMED')} className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700 shadow-sm shadow-indigo-200">
+                                                <CalendarCheck size={14} /> Randevuyu Onayla
+                                            </button>
+                                        )}
                                         <button onClick={() => changeStatus('COMPLETED')} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold hover:bg-emerald-100">
-                                            <CheckCircle2 size={14} /> Tamamlandı
+                                            <CheckCircle2 size={14} /> Muayene Bitti
                                         </button>
                                         <button onClick={() => changeStatus('NO_SHOW')} className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold hover:bg-rose-100">
                                             <XCircle size={14} /> Gelmedi

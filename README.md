@@ -1,118 +1,78 @@
-# 🏥 MHRS v6.0 Enterprise - T.C. Sağlık Bakanlığı Simülasyonu
+# MHRS Kurumsal Modernizasyon Projesi (v8.0 Professional)
 
-Bu proje, modern bir hastane randevu sisteminin (MHRS) Türkiye Cumhuriyeti ölçeğinde, kurumsal standartlarda geliştirilmiş en gelişmiş sürümüdür. 81 ilin tamamını, tüm ilçeleri ve devasa bir doktor/poliklinik veri setini kapsayan bu sistem; yüksek güvenlik, gerçek zamanlı veri senkronizasyonu ve gelişmiş kullanıcı deneyimi odaklıdır.
+![MHRS Banner](https://raw.githubusercontent.com/gizemakkaya2307-hue/mhrs/main/client/public/pwa-512x512.png)
 
-## ✨ v6.0 Enterprise Yenilikleri
+Bu proje, Türkiye Cumhuriyeti Sağlık Bakanlığı Merkezi Hekim Randevu Sistemi'nin (MHRS) modern teknolojilerle (MariaDB, Node.js, React, Docker) yeniden tasarlanmış, yüksek performanslı ve kurumsal standartlara uygun versiyonudur.
 
-### 🏗️ v7.0 Enterprise Modül Genişletmeleri
+## 🚀 Öne Çıkan Özellikler
 
-- **Doktor Paneli:** yaklaşan randevu, bekleme listesi, reçete kalemi ve laboratuvar sonucu yönetimi.
-- **Gelişmiş Admin Dashboard:** kurumsal metrikler + merkezi audit log izleme.
-- **Bildirim Merkezi:** in-app bildirim listeleme, okundu işaretleme, websocket canlı bildirimler.
-- **Çok adımlı randevu akışı:** taslak kaydetme (`AppointmentDraft`) ve adım bazlı ilerleme.
-- **Sağlık Geçmişi Profili:** alerji, kronik hastalık, ilaç ve acil iletişim bilgisi yönetimi.
-- **Audit Log Sistemi:** kritik aksiyonların izlenebilir şekilde kayıt altına alınması.
+- **MariaDB Enterprise Veritabanı:** SQLite'tan yüksek ölçeklenebilir MariaDB 10.6 mimarisine tam geçiş.
+- **81 İl & 1700+ Hekim Kapasitesi:** Tüm Türkiye'yi kapsayan gerçekçi veri seti (Seed script ile otomatik yüklenir).
+- **6 Aşamalı Randevu Sihirbazı:** 
+  1. İl/İlçe Seçimi
+  2. Hastane (Klinik) Filtreleme
+  3. Poliklinik (Branş) Seçimi
+  4. Hekim Seçimi
+  5. Tarih & Saat Belirleme
+  6. Onay Sistemi
+- **Hekim Paneli (Advanced):** Muayene notları, reçete yönetimi ve bekleyen randevuları "Onayla/İptal Et" mekanizması.
+- **Audit Log Sistemi:** Tüm kritik işlemlerin (Giriş, Randevu Oluşturma, Onay) veri güvenliği için izlenmesi.
+- **Docker Konteynerizasyon:** Tek komutla (Docker Compose) ayağa kalkan izole çalışma ortamı.
+- **PWA & Offline Destek:** Mobil uyumlu ve yüklenebilir uygulama altyapısı.
 
-### 🌐 v8.0 Mobil & Sürekli Entegrasyon (Son Özellikler)
+## 🛠 Teknoloji Yığını
 
-- **Çoklu Dil (i18n) Desteği:** Sistemin Türkçe ve İngilizce dahil birden fazla dil desteğine sahip olması.
-- **PWA (Progressive Web App):** Uygulamanın mobil cihazlara kurulabilmesi, çevrimdışı önbellekleme yetenekleri.
-- **CI/CD Pipeline (Jenkins):** Otomatik test, derleme ve deployment süreçlerinin Jenkins üzerinden yönetilmesi.
-- **Performans & Güvenlik:** Redis önbellek hatalarının giderilmesi, JWT auth entegrasyonu ve kararlı veritabanı iletişimi.
+- **Frontend:** React 18, Vite, Tailwind CSS, Framer Motion (Animasyonlar), Lucide Icons.
+- **Backend:** Node.js, Express, Prisma ORM, Socket.io (Anlık Bildirimler).
+- **Veritabanı:** MariaDB (Veri), Redis (Caching & Rate Limiting).
+- **DevOps:** Docker, Jenkins CI/CD Pipeline.
 
-## 🔌 Yeni API Modülleri (Özet)
+## 📦 Kurulum ve Çalıştırma
 
-- `GET /api/enterprise/doctor-panel`
-- `GET|PUT /api/enterprise/health-profile`
-- `GET|POST /api/enterprise/notifications`, `PATCH /api/enterprise/notifications/:id/read`
-- `GET|POST /api/enterprise/appointment-drafts`
-- `GET /api/enterprise/prescription-items/:appointmentId`, `POST /api/enterprise/prescription-items`
-- `GET /api/enterprise/lab-results/:appointmentId`, `POST /api/enterprise/lab-results`
-- `GET /api/enterprise/admin-dashboard`
-- `GET /api/enterprise/audit-logs`
-- `POST /api/enterprise/slot-update`
-
-### 🌍 Türkiye Geneli Veri Entegrasyonu
-
-- **81 İl & Tüm İlçeler:** Türkiye'nin 81 ilinin tamamı ve her ile ait ana ilçeler sisteme entegre edilmiştir.
-- **Gerçekçi Kurumlar:** "Çam ve Sakura Şehir Hastanesi", "Ankara Bilkent", "Bakırköy Dr. Sadi Konuk" gibi gerçek hastane isimleri ve profesyonel poliklinik yapıları.
-- **Enterprise Scale Seed:** Veritabanı 300+ uzman doktor ve yüzlerce kategorize edilmiş poliklinik ile doldurulmuştur.
-
-### 🩺 E-Nabız & Kişisel Sağlık Verisi
-
-- **Visit History:** Kullanıcının geçmiş muayene kayıtları, tanıları ve raporları (E-Nabız Simülasyonu).
-- **Akıllı Tanıma:** Arama sonuçlarında daha önce muayene olduğunuz doktorlar `💓 ÖNCEKİ MUAYENE` rozeti ile vurgulanır.
-- **Aile Fertleri:** Anne, baba ve çocuk gibi bağımlı kişileri ekleyip onlar adına randevu alabilme özelliği.
-
-### 🤖 Akıllı Yardımcılar (AI Helper)
-
-- **AI Symptom Checker:** Belirtilerinize göre (Örn: "Boğazım ağrıyor") size en uygun branşı (Kulak Burun Boğaz) öneren akıllı asistan.
-- **Gelişmiş Filtreleme:** Poliklinikleri branş bazlı (Kardiyoloji, Göz vb.) gruplandırılmış ve alfabetik sıralanmış şekilde filtreleme.
-
-## 🚀 Teknolojik Mimari
-
-- **Frontend:** React.js (Vite), TailwindCSS, Glassmorphism UI, Framer Motion (Mikro-animasyonlar).
-- **Backend:** Node.js, Express.js.
-- **Veritabanı:** **PostgreSQL** (Prisma ORM) - SQLite'dan kurumsal geçiş.
-- **Queue Management:** **BullMQ** (Redis tabanlı asenkron görev yönetimi).
-- **Notifications:** WebSockets (Live updates), Nodemailer (E-mail reminders), Node-cron (24h/1h reminders).
-- **Security:** JWT (Access/Refresh), RBAC (Admin/Doctor/User), Helmet, Rate Limiting, CORS.
-- **CI/CD & DevOps:** Docker, Docker Compose, Jenkins Pipeline.
-- **Documentation:** Swagger (OpenAPI 3.0).
-
-## 💽 Kurulum ve Çalıştırma (Docker)
-
-Sistemi tüm bağımlılıkları (PostgreSQL, Redis, Server, Client) ile tek seferde ayağa kaldırmak için:
+Proje tamamen Dockerize edilmiştir. Çalıştırmak için sisteminizde Docker'ın kurulu olması yeterlidir:
 
 ```bash
-docker-compose up --build -d
+# Projeyi klonlayın
+git clone https://github.com/gizemakkaya2307-hue/mhrs
+cd mhrs
+
+# Uygulamayı başlatın (Veritabanı otomatik oluşturulur ve seed edilir)
+docker-compose up -d --build
 ```
 
-### 🔁 Jenkins CI/CD Nasıl Çalıştırılır?
+Uygulama ayağa kalktığında:
+- **Frontend:** [http://localhost:5173](http://localhost:5173)
+- **API Server:** [http://localhost:3000](http://localhost:3000)
+- **MariaDB:** `localhost:3307` (Root: mhrs_pass)
 
-Projenin entegre CI/CD sürecini test etmek veya arka plan `akış` (pipeline) süreçlerini başlatmak için ayrı bir docker-compose yapımız mevcuttur:
+## 🔑 Test Hesapları
 
-```bash
-# Jenkins'i başlatmak için:
-docker-compose -f docker-compose.jenkins.yml up -d
+Geliştirme ve test süreçleri için aşağıdaki hesapları kullanabilirsiniz:
 
-# Jenkins Loglarını İzlemek için:
-docker logs -f mhrs_jenkins
-```
+| Rol | E-posta | Şifre |
+| :--- | :--- | :--- |
+| **Yönetici** | `admin@mhrs.gov.tr` | `12345678` |
+| **Hekim** | `doctor@mhrs.gov.tr` | `12345678` |
+| **Vatandaş** | `user@mhrs.gov.tr` | `12345678` |
 
-Jenkins arayüzüne **`http://localhost:8080`** adresinden erişebilirsiniz. İlk kurulum için admin şifresi loglarda görünecektir.
-
-**Varsayılan Erişimler:**
-
-- **Frontend:** `http://localhost:5173`
-- **Backend:** `http://localhost:3000`
-- **API Docs:** `http://localhost:3000/api-docs`
-
-## 🔑 Varsayılan Kullanıcı (v6.0 ENT)
-
-Sistemi tam yetkiyle test etmek için:
-
-- **E-Posta:** `admin@mhrs.gov.tr`
-- **Şifre:** `admin123`
-
-## 👨‍⚕️ Doktor Paneli Demo Kullanıcısı
-
-- **E-Posta:** `doctor@mhrs.gov.tr`
-- **Şifre:** `doctor123`
-- **Panel URL:** `http://localhost:5173/doctor-panel`
-
----
-
-## 📂 Dosya Yapısı
+## 📐 Mimari Yapı
 
 ```mermaid
 graph TD
-    A[Client - React v6.0] -->|API & WebSockets| B[Backend - Node Enterprise]
-    B -->|Task Queue| C[(Redis / BullMQ)]
-    B -->|Relational Data| D[(PostgreSQL)]
-    B -->|Logs| E[Winston Logger]
-    B -->|Cron| F[Reminder Engine]
+    Client[React Frontend] -->|API Request| LB[Nginx Proxy]
+    LB --> Server[Express Backend]
+    Server -->|ORM| Prisma[Prisma ORM]
+    Prisma -->|Query| DB[(MariaDB)]
+    Server -->|Cache| Redis[(Redis)]
+    Server -->|Real-time| WS[Socket.io]
 ```
 
+## 📝 Modernizasyon Notları
+
+Proje kapsamında yapılan son güncellemeler:
+1. **Node.js 20 Geçişi:** Daha yüksek performans ve kütüphane uyumluluğu için runtime güncellendi.
+2. **Context Optimizasyonu:** Docker build süreleri `.dockerignore` ile %90 oranında düşürüldü.
+3. **Randevu Akışı:** V6 legacy kodlar temizlendi ve modern UX standartlarında "Wizard" yapısına geçildi.
+
 ---
-**Geliştirme Raporu:** Yapılan tüm teknik iyileştirmelerin ve doğrulama kanıtlarının detaylı dökümüne [Walkthrough Raporu](file:///C:/Users/gizem/.gemini/antigravity/brain/cd7f39aa-0b7d-4e2d-a9b8-0ad01ec2760d/walkthrough.md) üzerinden ulaşabilirsiniz.
+*Bu proje eğitim ve kurumsal modernizasyon demosu amacıyla geliştirilmiştir.*

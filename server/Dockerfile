@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:20
 
 WORKDIR /app
 
@@ -8,9 +8,8 @@ RUN npm install --legacy-peer-deps
 
 COPY . .
 
-RUN npx prisma generate
-RUN npx prisma db push --accept-data-loss
+RUN ./node_modules/.bin/prisma generate
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ./node_modules/.bin/prisma db push --accept-data-loss && npm start
